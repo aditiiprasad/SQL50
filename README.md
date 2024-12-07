@@ -108,4 +108,85 @@ ORDER BY
 ```
 
 
+[570 - Manager with atleast 5 direct reports ](https://leetcode.com/problems/managers-with-at-least-5-direct-reports/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT E2.name 
+FROM Employee E2
+JOIN Employee E1 
+ON E1.managerId = E2.id
+GROUP BY E2.id, E2.name
+HAVING COUNT(E1.id) >= 5; 
+```
+
+[1934 - Confirmation Rate](https://leetcode.com/problems/confirmation-rate/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT Signups.user_id, 
+ROUND(
+    CASE 
+    WHEN COUNT(Confirmations.user_id) = 0 THEN 0
+    ELSE SUM(CASE WHEN Confirmations.action = 'confirmed' THEN 1 ELSE 0 END) / COUNT(Confirmations.user_id) END ,2) AS confirmation_rate 
+FROM Signups
+LEFT JOIN Confirmations
+ON Signups.user_id = Confirmations.user_id
+GROUP BY Signups.user_id;
+```
+
+[620 - Not Boring Movies](https://leetcode.com/problems/not-boring-movies/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT id, movie, description, rating
+FROM Cinema 
+WHERE id%2 = 1
+      AND description != "boring"
+ORDER BY rating DESC; 
+```
+
+[1251 - Average Selling Price](https://leetcode.com/problems/average-selling-price/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT P.product_id ,
+ COALESCE(ROUND(SUM(P.price * U.units) / NULLIF(SUM(U.units), 0), 2), 0) AS average_price
+FROM Prices P
+LEFT JOIN UnitsSold U
+ON P.product_id = U.product_id
+   AND U.purchase_date BETWEEN P. start_date AND P.end_date
+GROUP BY P.product_id;  
+```
+
+[1075 - Project Employess I](https://leetcode.com/problems/project-employees-i/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT P.project_id  , 
+ROUND(SUM(E.experience_years)/COUNT(P.employee_id),2)
+AS average_years
+FROM Project P
+JOIN Employee E
+ON P.employee_id = E.employee_id
+GROUP BY P.project_id ;
+```
+
+[1633 - Percentage of users attended a Contest](https://leetcode.com/problems/percentage-of-users-attended-a-contest/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT R.contest_id ,
+ROUND(COUNT(R.user_id)*100 / (SELECT COUNT(user_id) FROM Users),2)
+AS percentage 
+FROM Register R
+GROUP BY R.contest_id
+ORDER BY percentage DESC,
+         R.contest_id ASC;
+
+```
+
+[1211 - Queries Quality and Percentage](https://leetcode.com/problems/queries-quality-and-percentage/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT query_name ,
+ROUND(AVG(rating/position),2)
+AS quality, 
+ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END)*100 / COUNT(rating),2)
+AS poor_query_percentage
+FROM Queries
+WHERE query_name IS NOT NULL
+GROUP BY query_name;
+```
+
+
+
+
 
