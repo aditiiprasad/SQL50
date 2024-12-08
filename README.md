@@ -174,6 +174,10 @@ ORDER BY percentage DESC,
 
 ```
 
+
+
+
+
 [1211 - Queries Quality and Percentage](https://leetcode.com/problems/queries-quality-and-percentage/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
 SELECT query_name ,
@@ -186,6 +190,77 @@ WHERE query_name IS NOT NULL
 GROUP BY query_name;
 ```
 
+[1193 - Monthly Transactions I](https://leetcode.com/problems/monthly-transactions-i/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT
+DATE_FORMAT(trans_date, '%Y-%m') AS month,
+country,
+COUNT(id) AS trans_count ,
+COUNT(CASE WHEN state = "approved" THEN 1 END) AS approved_count ,
+SUM(amount) AS trans_total_amount ,
+SUM(CASE WHEN state="approved" THEN amount ELSE 0 END) AS approved_total_amount
+FROM  transactions
+GROUP BY DATE_FORMAT(trans_date, '%Y-%m'), country;
+```
+
+[1174 - Immediate Food Delivery II](https://leetcode.com/problems/immediate-food-delivery-ii/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT 
+ROUND(COUNT(CASE WHEN  order_date=customer_pref_delivery_date THEN 1 END)*100/COUNT(customer_id),2)
+AS immediate_percentage 
+FROM Delivery
+WHERE 
+(customer_id , order_date ) IN (
+    SELECT customer_id, MIN(order_date)
+    FROM Delivery
+    GROUP BY customer_id
+);
+
+```
+
+[550 - Game Play Analysis IV](https://leetcode.com/problems/game-play-analysis-iv/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+WITH FirstLogin AS (
+
+    SELECT
+        player_id,
+        MIN(event_date) AS first_login_date
+    FROM
+        Activity
+    GROUP BY
+        player_id
+),
+NextDayLogin AS (
+    
+    SELECT
+        f.player_id
+    FROM
+        FirstLogin f
+    JOIN
+        Activity a
+    ON
+        f.player_id = a.player_id
+        AND a.event_date = DATE_ADD(f.first_login_date, INTERVAL 1 DAY)
+)
+
+SELECT
+    ROUND(COUNT(DISTINCT n.player_id) * 1.0 / COUNT(DISTINCT f.player_id), 2) AS fraction
+FROM
+    FirstLogin f
+LEFT JOIN
+    NextDayLogin n
+ON
+    f.player_id = n.player_id;
+```
+
+[2356 - Number of unique subjects tought by each teacher](https://leetcode.com/problems/number-of-unique-subjects-taught-by-each-teacher/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT teacher_id,
+       COUNT(DISTINCT subject_id ) as cnt 
+FROM Teacher
+GROUP BY   teacher_id;
+
+```
 
 
 
